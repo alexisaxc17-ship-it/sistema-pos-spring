@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Home POS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        /* Barra superior */
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-icon {
+            font-size: 28px;
+            background-color: #ffc107;
+            color: #212529;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-info div p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
+        /* Contenedor principal */
+        .container-dashboard {
+            padding: 50px 20px;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card-module {
+            width: 220px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .card-module:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .card-module i {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .card-module h3 {
+            margin-bottom: 10px;
+        }
+
+        .card-module p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .card-module a {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 8px;
+            background-color: rgba(255,255,255,0.9);
+            color: #212529;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .card-module a:hover {
+            background-color: white;
+        }
+
+        /* Colores de cada módulo */
+        .ventas { background: #007bff; }
+        .productos { background: #28a745; }
+        .reportes { background: #fd7e14; }
+    </style>
+</head>
+<body>
+
+<!-- Barra superior -->
+<header>
+    <h2>🏪 Sistema POS</h2>
+    <div class="user-info">
+        <div class="user-icon">👤</div>
+        <div>
+            <p><strong>Usuario:</strong> <span th:text="${#authentication.name}">nombre_usuario</span></p>
+            <p><strong>Rol:</strong> <span th:text="${#authentication.authorities[0].authority}">ROL_USER</span></p>
+        </div>
+
+        <!-- Formulario oculto para logout -->
+        <form th:action="@{/logout}" method="post" id="logoutForm" style="display: none;"></form>
+
+        <!-- Botón estilo dashboard -->
+        <a href="#" class="btn btn-light btn-sm logout-btn"
+           onclick="document.getElementById('logoutForm').submit(); return false;">
+            🔒 Cerrar sesión
+        </a>
+    </div>
+</header>
+
+
+<!-- Contenedor principal -->
+<div class="container-dashboard">
+    <h3 class="text-center mb-5">Bienvenido al sistema POS</h3>
+
+    <div class="cards-container">
+        <!-- Ventas -->
+        <div class="card-module ventas">
+            <i>🛒</i>
+            <h3>Ventas</h3>
+            <p>Registrar ventas y escanear productos con QR.</p>
+            <a href="#">Ir al módulo</a>
+        </div>
+
+        <!-- Productos -->
+        <div class="card-module productos">
+            <i>📦</i>
+            <h3>Productos</h3>
+            <p>Gestionar inventario: agregar, editar o eliminar productos.</p>
+            <a th:href="@{/productos}" class="btn btn-primary">Ir al módulo</a>
+        </div>
+
+        <!-- Reportes -->
+        <div class="card-module reportes">
+            <i>📊</i>
+            <h3>Reportes</h3>
+            <p>Ver historial de ventas y generar reportes diarios.</p>
+            <a href="#">Ir al módulo</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
