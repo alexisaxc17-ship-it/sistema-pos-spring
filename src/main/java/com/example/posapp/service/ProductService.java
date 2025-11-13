@@ -2,45 +2,35 @@ package com.example.posapp.service;
 
 import com.example.posapp.model.Product;
 import com.example.posapp.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class ProductService {
 
-    private final ProductRepository repo;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public ProductService(ProductRepository repo) {
-        this.repo = repo;
+    public List<Product> listarProductos() {
+        return productRepository.findAll();
     }
 
-    public List<Product> findAll() {
-        return repo.findAll();
+    public void guardarProducto(Product product) {
+        productRepository.save(product);
     }
 
-    public Optional<Product> findById(Long id) {
-        return repo.findById(id);
+    public Optional<Product> obtenerPorId(Long id) {
+        return productRepository.findById(id);
     }
 
-    public Optional<Product> findByCodigoQr(String codigo) {
-        return repo.findByCodigoQr(codigo);
+    public void eliminarProducto(Long id) {
+        productRepository.deleteById(id);
     }
 
-    @Transactional
-    public Product save(Product product) {
-        // si no tiene codigoQr, generar uno único
-        if (product.getCodigoQr() == null || product.getCodigoQr().isBlank()) {
-            product.setCodigoQr(UUID.randomUUID().toString());
-        }
-        return repo.save(product);
-    }
-
-    @Transactional
-    public void deleteById(Long id) {
-        repo.deleteById(id);
+    public Optional<Product> buscarPorCodigo(String codigo) {
+        return productRepository.findByCodigo(codigo);
     }
 }

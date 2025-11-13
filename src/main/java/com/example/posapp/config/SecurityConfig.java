@@ -39,9 +39,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error","/productos/nuevo", "/productos/guardar").permitAll()
+                        .requestMatchers("/login", "/error").permitAll()
+                        .requestMatchers("/productos/**").authenticated() // Todas las rutas de productos requieren login
                         .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
