@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Reporte de Ventas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container {
+            max-width: 1000px;
+            margin-top: 40px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 { color: #0d6efd; font-weight: 600; }
+        .table thead th {
+            background-color: #0d6efd;
+            color: white;
+            text-align: center;
+        }
+        .table tbody td { text-align: center; vertical-align: middle; }
+        .form-label { color: #0d6efd; }
+        footer { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #6c757d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📋 Reporte de Ventas</h2>
+        <a th:href="@{/reportes}" class="btn btn-outline-secondary">🏠 Inicio</a>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <div th:if="${ventas != null and !ventas.isEmpty()}">
+        <table class="table table-striped table-hover align-middle shadow-sm">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Total ($)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Iteración segura de ventas -->
+            <tr th:each="venta, vStat : ${ventas}">
+                <!-- definimos 'detalles' protegiendo null: si venta o sus detalles son null usamos lista vacía -->
+                <th:block th:with="detalles=${venta?.detalles} ?: []">
+                    <td th:text="${vStat.index + 1}"
+                        th:rowspan="${#lists.size(detalles) > 0 ? #lists.size(detalles) : 1}"></td>
+                    <td th:text="${#temporals.format(venta.fecha, 'dd/MM/yyyy')}"
+                        th:rowspan="${#lists.size(detalles) > 0 ? #lists.size(detalles) : 1}"></td>
+
+                    <td th:text="${#lists.size(detalles) > 0 ? detalles[0].producto.nombre : '—'}"></td>
+                    <td th:text="${#lists.size(detalles) > 0 ? detalles[0].cantidad : '—'}"></td>
+                    <td th:text="${#lists.size(detalles) > 0
+                                  ? #numbers.formatDecimal(detalles[0].subtotal, 1, 2)
+                                  : #numbers.formatDecimal(venta.total, 1, 2)}"></td>
+                </th:block>
+            </tr>
+
+            <!-- Filas adicionales (iteramos 'detalles' ya inicializada) -->
+            <tr th:each="venta, vStat : ${ventas}">
+                <!-- Usamos la misma variable 'detalles' por row: -->
+                <th:block th:with="detalles=${venta?.detalles} ?: []">
+                    <tr th:each="detalle, dStat : ${detalles}" th:if="${dStat.index > 0}">
+                        <td th:text="${detalle.producto.nombre}"></td>
+                        <td th:text="${detalle.cantidad}"></td>
+                        <td th:text="${#numbers.formatDecimal(detalle.subtotal, 1, 2)}"></td>
+                    </tr>
+                </th:block>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <!-- Total general -->
+        <div class="text-end mt-3">
+            <h5 class="fw-bold text-primary">
+                Total General: $
+                <span th:text="${#numbers.formatDecimal(totalGeneral, 1, 2)}"></span>
+            </h5>
+        </div>
+    </div>
+
+    <!-- Mensaje si no hay datos -->
+    <div th:if="${ventas == null or ventas.isEmpty()}" class="alert alert-warning text-center mt-4">
+        ⚠️ No se encontraron resultados para el rango de fechas seleccionado.
+    </div>
+
+    <footer>
+        Sistema POS — Módulo de Reportes © 2025
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
