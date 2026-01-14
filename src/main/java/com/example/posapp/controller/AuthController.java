@@ -11,8 +11,5 @@ public class AuthController {
         return "login";
     }
 
-    @GetMapping("/home")
-    public String home() {
-        return "home"; // más adelante pondremos un dashboard
-    }
+
 }

@@ -13,6 +13,10 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     @Query("SELECT v FROM Venta v WHERE v.fecha BETWEEN :inicio AND :fin ORDER BY v.fecha ASC")
     List<Venta> findByRangoFechas(@Param("inicio") OffsetDateTime inicio,
                                   @Param("fin") OffsetDateTime fin);
+
+    // Consulta JPQL para sumar el total de hoy
+    @Query("SELECT SUM(v.total) FROM Venta v WHERE v.fecha >= CURRENT_DATE")
+    Double sumTotalVentasHoy();
 }
 
 

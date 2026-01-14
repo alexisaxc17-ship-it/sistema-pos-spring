@@ -8,4 +8,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findByCodigo(String codigo);
+
+    // Nuevo método para las alertas del Home
+    long countByStockLessThan(int limite);
 }
