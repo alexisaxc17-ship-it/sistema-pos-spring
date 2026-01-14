@@ -65,45 +65,41 @@ public class ReporteController {
         return "reportes/lista"; // Template donde se muestra la lista
     }
 
-    // Exportar PDF
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> exportarPDF(
             @RequestParam("inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
-            @RequestParam("fin")    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+            @RequestParam("fin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
 
         List<Venta> ventas = reporteService.obtenerVentasPorRango(inicio, fin);
-        if (ventas == null) ventas = new ArrayList<>();
-        double total = ventas.stream().mapToDouble(Venta::getTotal).sum();
+        double total = (ventas != null) ? ventas.stream().mapToDouble(Venta::getTotal).sum() : 0;
 
         try (ByteArrayInputStream pdf = ReportePDFGenerator.generarReportePDF(ventas, total)) {
-            byte[] pdfBytes = pdf.readAllBytes();
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_ventas.pdf")
                     .contentType(MediaType.APPLICATION_PDF)
-                    .body(pdfBytes);
+                    .body(pdf.readAllBytes());
         } catch (IOException e) {
             throw new RuntimeException("Error al generar PDF", e);
         }
     }
 
-    // Exportar Excel
     @GetMapping("/excel")
     public ResponseEntity<byte[]> exportarExcel(
             @RequestParam("inicio") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
-            @RequestParam("fin")    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+            @RequestParam("fin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
 
         List<Venta> ventas = reporteService.obtenerVentasPorRango(inicio, fin);
-        if (ventas == null) ventas = new ArrayList<>();
-        double total = ventas.stream().mapToDouble(Venta::getTotal).sum();
+        double total = (ventas != null) ? ventas.stream().mapToDouble(Venta::getTotal).sum() : 0;
 
         try (ByteArrayInputStream excel = ReporteExcelGenerator.generarReporteExcel(ventas, total)) {
-            byte[] excelBytes = excel.readAllBytes();
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte_ventas.xlsx")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(excelBytes);
+                    // Tipo de contenido oficial para .xlsx
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(excel.readAllBytes());
         } catch (IOException e) {
             throw new RuntimeException("Error al generar Excel", e);
         }
     }
+
 }

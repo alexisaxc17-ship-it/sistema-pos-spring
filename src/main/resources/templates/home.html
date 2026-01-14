@@ -2,172 +2,240 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Home POS</title>
+    <title>Home POS - Sistema de Gestión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f0f2f5;
+        :root {
+            --primary-grad: linear-gradient(135deg, #1a73e8 0%, #7010f2 100%);
         }
 
-        /* Barra superior */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fe; /* Un gris azulado más profesional */
+            color: #2d3436;
+        }
+
+        /* Navbar con degradado de marca */
         header {
-            background-color: #007bff;
+            background: var(--primary-grad);
             color: white;
-            padding: 15px 30px;
+            padding: 12px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         header h2 {
             margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
         }
 
-        .user-info {
+        .user-pill {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 15px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            backdrop-filter: blur(5px);
         }
 
         .user-icon {
-            font-size: 28px;
-            background-color: #ffc107;
-            color: #212529;
+            font-size: 20px;
+            background-color: #ffffff;
+            color: #7010f2;
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .user-info div p {
+        .user-info-text p {
             margin: 0;
-            font-size: 14px;
+            font-size: 12px;
+            line-height: 1.2;
         }
 
         .logout-btn {
-            margin-left: 15px;
+            background-color: #ffffff;
+            color: #d63031 !important;
             font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
 
-        /* Contenedor principal */
+        .logout-btn:hover {
+            background-color: #fff5f5;
+            transform: scale(1.05);
+        }
+
+        /* Seccion de Estadísticas Rápidas */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid #7010f2;
+        }
+
+        .stat-card i { font-size: 2rem; color: #7010f2; opacity: 0.8; }
+        .stat-card div h4 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+        .stat-card div span { font-size: 0.8rem; color: #636e72; }
+
+        /* Contenedor de Tarjetas de Módulos */
         .container-dashboard {
-            padding: 50px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .welcome-text {
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 35px;
         }
 
         .cards-container {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
 
         .card-module {
-            width: 220px;
-            padding: 30px 20px;
-            border-radius: 20px;
+            padding: 40px 30px;
+            border-radius: 24px;
             text-align: center;
             color: white;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         .card-module:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            color: white;
         }
 
         .card-module i {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-
-        .card-module h3 {
-            margin-bottom: 10px;
-        }
-
-        .card-module p {
-            font-size: 14px;
+            font-size: 60px;
             margin-bottom: 20px;
+            display: block;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        .card-module a {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 8px;
-            background-color: rgba(255,255,255,0.9);
-            color: #212529;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s;
+        .card-module h3 { font-weight: 700; margin-bottom: 15px; }
+        .card-module p { opacity: 0.9; font-size: 0.95rem; margin-bottom: 25px; }
+
+        .btn-module {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .card-module a:hover {
-            background-color: white;
-        }
+        /* Colores con degradado para las tarjetas */
+        .ventas { background: linear-gradient(135deg, #007bff, #00c6ff); }
+        .productos { background: linear-gradient(135deg, #28a745, #a8e063); }
+        .reportes { background: linear-gradient(135deg, #fd7e14, #ffaf40); }
 
-        /* Colores de cada módulo */
-        .ventas { background: #007bff; }
-        .productos { background: #28a745; }
-        .reportes { background: #fd7e14; }
     </style>
 </head>
 <body>
 
-<!-- Barra superior -->
 <header>
-    <h2>🏪 Sistema POS</h2>
-    <div class="user-info">
-        <div class="user-icon">👤</div>
-        <div>
-            <p><strong>Usuario:</strong> <span th:text="${#authentication.name}">nombre_usuario</span></p>
-            <p><strong>Rol:</strong> <span th:text="${#authentication.authorities[0].authority}">ROL_USER</span></p>
+    <h2>🏪 Tienda PITURS</h2>
+    <div class="user-info d-flex align-items-center gap-3">
+        <div class="user-pill">
+            <div class="user-icon"><i class="bi bi-person-fill"></i></div>
+            <div class="user-info-text">
+                <p><strong><span th:text="${#authentication.name}">Admin</span></strong></p>
+                <p><span th:text="${#authentication.authorities[0].authority}">Administrador</span></p>
+            </div>
         </div>
 
-        <!-- Formulario oculto para logout -->
         <form th:action="@{/logout}" method="post" id="logoutForm" style="display: none;"></form>
-
-        <!-- Botón estilo dashboard -->
-        <a href="#" class="btn btn-light btn-sm logout-btn"
+        <a href="#" class="btn btn-light btn-sm logout-btn shadow-sm"
            onclick="document.getElementById('logoutForm').submit(); return false;">
-            🔒 Cerrar sesión
+            <i class="bi bi-box-arrow-right"></i> Salir
         </a>
     </div>
 </header>
 
-
-<!-- Contenedor principal -->
 <div class="container-dashboard">
-    <h3 class="text-center mb-5">Bienvenido al sistema POS</h3>
+    <h2 class="welcome-text">Panel de Control</h2>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <i class="bi bi-currency-dollar"></i>
+            <div>
+                <h4 th:text="${'$ ' + #numbers.formatDecimal(ventasHoy, 1, 'COMMA', 2, 'POINT')}">$0.00</h4>
+                <span>Ventas de hoy</span>
+            </div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #28a745;">
+            <i class="bi bi-box-seam" style="color: #28a745;"></i>
+            <div>
+                <h4 th:text="${totalProductos}">0</h4>
+                <span>Productos en stock</span>
+            </div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #dc3545;">
+            <i class="bi bi-exclamation-triangle" style="color: #dc3545;"></i>
+            <div>
+                <h4 th:text="${alertasStock}">0</h4>
+                <span>Alertas de inventario</span>
+            </div>
+        </div>
+    </div>
 
     <div class="cards-container">
-        <!-- Ventas -->
-        <div class="card-module ventas">
-            <i>🛒</i>
+        <a th:href="@{/ventas}" class="card-module ventas">
+            <i class="bi bi-cart4"></i>
             <h3>Ventas</h3>
-            <p>Registrar ventas y escanear productos con QR.</p>
-            <a th:href="@{/ventas}" class="btn btn-primary">Ir al módulo</a>
-        </div>
+            <p>Registro de ventas y control de salidas.</p>
+            <span class="btn-module">Abrir Caja</span>
+        </a>
 
-        <!-- Productos -->
-        <div class="card-module productos">
-            <i>📦</i>
-            <h3>Productos</h3>
-            <p>Gestionar inventario: agregar, editar o eliminar productos.</p>
-            <a th:href="@{/productos}" class="btn btn-primary">Ir al módulo</a>
-        </div>
+        <a th:href="@{/productos}" class="card-module productos">
+            <i class="bi bi-box-fill"></i>
+            <h3>Inventario</h3>
+            <p>Control de productos, stock y precios.</p>
+            <span class="btn-module">Gestionar</span>
+        </a>
 
-        <!-- Reportes -->
-        <div class="card-module reportes">
-            <i>📊</i>
-            <h3>Reportes</h3>
-            <p>Ver historial de ventas y generar reportes diarios.</p>
-            <a th:href="@{/reportes}" class="btn btn-primary">Ir al módulo</a>
-        </div>
+        <a th:href="@{/reportes}" class="card-module reportes">
+            <i class="bi bi-bar-chart-line-fill"></i>
+            <h3>Análisis</h3>
+            <p>Reportes de rendimiento y cierres diarios.</p>
+            <span class="btn-module">Ver Reportes</span>
+        </a>
     </div>
 </div>
 
